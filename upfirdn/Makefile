@@ -45,5 +45,5 @@ all: $(WRAPPERS)
 .PHONY : clean
 clean:
 	$(RM) $(WRAPPERS)
-	$(RM) $(WRAPPERS)
+	$(RM) $(PROXIES)
 	$(RM) *.so
