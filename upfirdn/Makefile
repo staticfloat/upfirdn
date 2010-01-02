@@ -34,15 +34,16 @@ INTERFACES = Resampler.i
 WRAPPERS   = $(INTERFACES:.i=_wrap.cpp)
 PROXIES    = $(INTERFACES:.i=.py      )
 
-# Default target: build the tests
-.PHONY : all
-all:
-	./setup.py build_ext -i
+all: $(WRAPPERS)
+
+# Rule: %.i -> %_wrap.cpp  (also creates %.py)
+%_wrap.cpp: %.i %.h
+	swig -c++ -python -o $@ $<
+
 
 # Clean target
 .PHONY : clean
 clean:
-	$(RM) -r build
-	$(RM) *.so
 	$(RM) $(WRAPPERS)
-	$(RM) $(PROXIES)
+	$(RM) $(WRAPPERS)
+	$(RM) *.so

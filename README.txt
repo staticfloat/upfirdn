@@ -35,6 +35,8 @@ OVERVIEW
 This package provides a C++ object for efficient, polyphase FIR resampling
 along with a python module with a functional and object interface.
 
+See INSTALL.txt for notes about installation.
+
 ALGORITHM DESCRIPTION
 A "filter bank with resampling" is an operation on an input signal that 
 generates an output signal, consisting of the following 3 steps:
