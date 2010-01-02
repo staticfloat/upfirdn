@@ -1,3 +1,4 @@
 include *.txt
+include upfirdn/Makefile
 include upfirdn/*.i
 include upfirdn/*.h

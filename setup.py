@@ -116,7 +116,7 @@ setup(name = "upfirdn",
       py_modules = ['upfirdn.Resampler'],
       ext_modules = [_Resampler],
       packages = ['upfirdn'],
-      package_data={'upfirdn': ['*.i', '*.h']},
+      package_data={'upfirdn': ['Makefile', '*.i', '*.h']},
       cmdclass = {'build_ext': custom_build_ext}
       )
 
