@@ -107,7 +107,7 @@ class custom_build_ext(build_ext):
         shutil.copy(ext_filename, inplace_ext_filename)
         
 setup(name = "upfirdn",
-      version = "0.2.0",
+      version = "0.2.1",
       description = "An efficient polyphase FIR resampler",
       author      = "Tom Krauss and Bryan Nollett",
       author_email = 'krauss@motorola.com',

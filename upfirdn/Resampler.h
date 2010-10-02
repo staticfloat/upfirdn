@@ -19,7 +19,8 @@ used to endorse or promote products derived from this software without
 specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS 
-IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,  
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
 PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
 CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
 EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
@@ -36,6 +37,7 @@ using namespace std;
 
 #include <stdexcept>
 #include <complex>
+#include <vector>
 
 template<class S1, class S2, class C>
 class Resampler{
@@ -49,6 +51,7 @@ public:
 
     int        apply(S1* in, int inCount, S2* out, int outCount);
     int        neededOutCount(int inCount);
+    int        coefsPerPhase() { return _coefsPerPhase; }
     
 private:
     int        _upRate;
@@ -191,5 +194,63 @@ int Resampler<S1, S2, C>::apply(S1* in, int inCount,
     // number of samples computed
     return y - out;
 }
+
+template<class S1, class S2, class C>
+void upfirdn(int upRate, int downRate, 
+             S1 *input, int inLength, C *filter, int filterLength, 
+             vector<S2> &results)
+/*
+This template function provides a one-shot resampling.  Extra samples
+are padded to the end of the input in order to capture all of the non-zero 
+output samples.
+The output is in the "results" vector which is modified by the function.
+
+Note, I considered returning a vector instead of taking one on input, but
+then the C++ compiler has trouble with implicit template instantiation
+(e.g. have to say upfirdn<float, float, float> every time - this
+way we can let the compiler infer the template types).
+
+Thanks to Lewis Anderson (lkanders@ucsd.edu) at UCSD for
+the original version of this function.
+*/
+{
+    // Create the Resampler
+    Resampler<S1, S2, C> theResampler(upRate, downRate, filter, filterLength);
+
+    // pad input by length of one polyphase of filter to flush all values out
+    int padding = theResampler.coefsPerPhase() - 1;
+    S1 *inputPadded = new S1[inLength + padding];
+    for (int i = 0; i < inLength + padding; i++) {
+        if (i < inLength)
+            inputPadded[i] = input[i];
+        else
+            inputPadded[i] = 0;
+    }
+
+    // calc size of output
+    int resultsCount = theResampler.neededOutCount(inLength + padding); 
+
+    results.resize(resultsCount);
+
+    // run filtering
+    int numSamplesComputed = theResampler.apply(inputPadded, 
+            inLength + padding, &results[0], resultsCount);
+    delete[] inputPadded;
+}
+
+template<class S1, class S2, class C>
+void upfirdn(int upRate, int downRate, 
+             vector<S1> &input, vector<C> &filter, vector<S2> &results)
+/*
+This template function provides a one-shot resampling.
+The output is in the "results" vector which is modified by the function.
+In this version, the input and filter are vectors as opposed to 
+pointer/count pairs.
+*/
+{
+    upfirdn<S1, S2, C>(upRate, downRate, &input[0], input.size(), &filter[0], 
+                       filter.size(), results);
+}
+
 
 #endif
