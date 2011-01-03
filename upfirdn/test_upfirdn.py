@@ -120,7 +120,7 @@ class ResamplerCase(object):
             nmse = np.sum(abs(y - yr)**2) / np.sum(abs(yr)**2)
             print '%10s(%5d) %12s nmse = %10f    %10fx' % \
                 (name, len(x), test, nmse, resample_time/test_time)
-            assert 10*np.log10(nmse)<-100.
+            assert nmse < 1e-10
             
         
 

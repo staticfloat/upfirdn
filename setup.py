@@ -58,7 +58,7 @@ from distutils.command.build_ext import build_ext, log
 import numpy
 
 majver, minver = [float(i) for i in numpy.__version__.split('.')[:2]]
-assert (majver >= 1 and minver >= 2), "Requires Numpy 1.2.0 or above"
+assert (majver + minver/10. >= 1.2), "Requires Numpy 1.2.0 or above"
 # needs function "broadcast_arrays", which appears in 1.2.0 of numpy
 
 # Obtain the numpy include directory.
