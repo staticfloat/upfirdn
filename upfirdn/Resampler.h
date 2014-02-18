@@ -134,7 +134,7 @@ template<class S1, class S2, class C>
 int Resampler<S1, S2, C>::neededOutCount(int inCount)
 /* compute how many outputs will be generated for inCount inputs  */
 {
-    int np = inCount * _upRate;
+    unsigned long np = inCount * (unsigned long) _upRate;
     int need = np / _downRate;
     if ((_t + _upRate * _xOffset) < (np % _downRate))
         need++;
